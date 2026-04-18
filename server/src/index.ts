@@ -2,6 +2,11 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database';
+import authRoutes from './routes/auth';
+import animalRoutes from './routes/animals';
+import appointmentRoutes from './routes/appointments';
+import vaccinationRoutes from './routes/vaccinations';
+import dashboardRoutes from './routes/dashboard';
 
 dotenv.config();
 
@@ -15,7 +20,14 @@ app.use(express.urlencoded({ extended: true }));
 // Database connection
 connectDB();
 
-// Routes (placeholder - will be implemented in future changes)
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/animals', animalRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/vaccinations', vaccinationRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// Health check (placeholder - will be implemented in future changes)
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', message: 'VetClinic Pro API is running' });
 });
