@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
 import * as animalController from '../controllers/animalController';
 import { authenticate } from '../middleware/auth';
 import { AnimalCreateSchema, AnimalUpdateSchema } from '../schemas/animalSchema';
@@ -8,8 +9,8 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
-// Validation middleware factory
-const validateBody = (schema: typeof AnimalCreateSchema) => {
+// Validation middleware factory - use ZodType for compatibility
+const validateBody = <T>(schema: z.ZodType<T>) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const result = schema.safeParse(req.body);
     if (!result.success) {

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/database';
 import authRoutes from './routes/auth';
 import animalRoutes from './routes/animals';
+import appointmentRoutes from './routes/appointments';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ connectDB();
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/animals', animalRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 // Health check (placeholder - will be implemented in future changes)
 app.get('/api/health', (req: Request, res: Response) => {
