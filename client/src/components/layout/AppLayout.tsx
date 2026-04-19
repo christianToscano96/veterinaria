@@ -155,7 +155,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0">
+      <main className="lg:ml-64 pt-16 lg:pt-0" style={{ backgroundColor: 'rgb(255, 247, 250)' }}>
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
     </div>

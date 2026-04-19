@@ -7,20 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary - Orchid (Veterinaria Pandy)
+        // Primary - Orchid (Veterinaria Pandy) - Exact match with theme.ts
         primary: {
           DEFAULT: '#9e18a6',
           container: '#bc3ac1',
-          muted: '#814974',
           foreground: '#ffffff',
         },
-        // Secondary - Deep Plum
+        // Secondary - Match with theme.ts
         secondary: {
-          DEFAULT: '#814974',
+          DEFAULT: '#68548d',
           container: '#d6beff',
-          foreground: '#221921',
+          foreground: '#ffffff',
         },
-        // Surface
+        // Surface - Match with theme.ts
         surface: {
           DEFAULT: '#ffffff',
           dim: '#e6d5e1',
@@ -33,9 +32,11 @@ export default {
           error: '#ef4444',
           info: '#3b82f6',
         },
-        // Backgrounds
-        background: '#fafafa',
+        // Backgrounds - Exact match with theme.ts
+        background: '#fff7fa',
         foreground: '#221921',
+        'on-surface': '#221921',
+        'on-surface-variant': '#524250',
         
         // Standard shadcn/ui (for compatibility)
         border: "hsl(var(--border))",
