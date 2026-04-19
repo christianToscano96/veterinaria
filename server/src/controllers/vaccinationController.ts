@@ -65,7 +65,8 @@ export const getVaccinationsByAnimal = async (req: Request, res: Response): Prom
       return transformVaccination(obj);
     });
 
-    successResponse(res, vaccinationsResponse);
+    // Return as object with vaccinations key for consistency
+    successResponse(res, { vaccinations: vaccinationsResponse });
   } catch (error) {
     console.error('GetVaccinationsByAnimal error:', error);
     if (error instanceof Error && error.message.includes('Invalid animal ID')) {
@@ -95,7 +96,7 @@ export const getUpcomingVaccinations = async (req: Request, res: Response): Prom
       return transformVaccination(obj);
     });
 
-    successResponse(res, vaccinationsResponse);
+    successResponse(res, { vaccinations: vaccinationsResponse });
   } catch (error) {
     console.error('GetUpcomingVaccinations error:', error);
     errorResponse(res, 'Internal server error', 'INTERNAL_ERROR');
@@ -113,7 +114,7 @@ export const getOverdueVaccinations = async (req: Request, res: Response): Promi
       return transformVaccination(obj);
     });
 
-    successResponse(res, vaccinationsResponse);
+    successResponse(res, { vaccinations: vaccinationsResponse });
   } catch (error) {
     console.error('GetOverdueVaccinations error:', error);
     errorResponse(res, 'Internal server error', 'INTERNAL_ERROR');
@@ -123,12 +124,18 @@ export const getOverdueVaccinations = async (req: Request, res: Response): Promi
 // Create vaccination
 export const createVaccination = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('=== CREATE VACCINATION ===');
+    console.log('Body:', JSON.stringify(req.body));
+    
     const result = VaccinationCreateSchema.safeParse(req.body);
 
     if (!result.success) {
+      console.log('Validation errors:', JSON.stringify(result.error.issues));
       errorResponse(res, 'Validation failed', 'VALIDATION_ERROR', 400, result.error.issues);
       return;
     }
+
+    console.log('Parsed successfully:', result.data);
 
     const vaccination = await vaccinationService.create(result.data);
 

@@ -6,6 +6,8 @@ import authRoutes from './routes/auth';
 import animalRoutes from './routes/animals';
 import appointmentRoutes from './routes/appointments';
 import vaccinationRoutes from './routes/vaccinations';
+import medicalRecordRoutes from './routes/medicalRecords';
+import socialPostRoutes from './routes/socialPosts';
 import dashboardRoutes from './routes/dashboard';
 
 dotenv.config();
@@ -25,6 +27,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/animals', animalRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/vaccinations', vaccinationRoutes);
+app.use('/api/medical-records', medicalRecordRoutes);
+app.use('/api/social-posts', socialPostRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 // Health check (placeholder - will be implemented in future changes)
