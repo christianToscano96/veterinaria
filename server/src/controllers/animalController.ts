@@ -101,10 +101,21 @@ export const getAnimals = async (req: Request, res: Response): Promise<void> => 
 export const getAnimal = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
+    
+    console.log('=== GET ANIMAL ===');
+    console.log('Received ID:', id, 'Type:', typeof id);
+    
+    // Validate ID exists and is valid
+    if (!id || id === 'undefined' || id === 'null' || id === '') {
+      console.log('Invalid ID detected');
+      errorResponse(res, 'Animal ID is required', 'VALIDATION_ERROR', 400);
+      return;
+    }
 
     const animal = await Animal.findById(id).lean();
 
     if (!animal) {
+      console.log('Animal not found for ID:', id);
       errorResponse(res, 'Animal not found', 'ANIMAL_NOT_FOUND', 404);
       return;
     }

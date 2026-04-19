@@ -46,8 +46,10 @@ export function calculateVaccinationStatus(nextDueDate: Date | null | undefined)
  * Get all vaccinations for a specific animal
  */
 export async function getAllForAnimal(animalId: string): Promise<unknown[]> {
-  if (!mongoose.Types.ObjectId.isValid(animalId)) {
-    throw new Error('Invalid animal ID');
+  // Validate ObjectId format - return empty array for invalid IDs
+  if (!animalId || typeof animalId !== 'string' || !mongoose.Types.ObjectId.isValid(animalId)) {
+    console.warn('Invalid animal ID received:', animalId);
+    return [];
   }
 
   const vaccinations = await Vaccination.find({ animal: animalId })
