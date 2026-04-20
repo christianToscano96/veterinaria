@@ -8,11 +8,7 @@ interface BentoCardProps {
 }
 
 export function BentoCard({ children, style }: BentoCardProps) {
-  return (
-    <div style={{ ...styles.card, ...style }}>
-      {children}
-    </div>
-  );
+  return <div style={{ ...styles.card, ...style }}>{children}</div>;
 }
 
 export function BentoLarge({ children }: { children: React.ReactNode }) {
@@ -32,13 +28,20 @@ interface VaccinationDriveProps {
   onNotify?: () => void;
 }
 
-export function VaccinationDrive({ patientCount, onNotify }: VaccinationDriveProps) {
+export function VaccinationDrive({
+  patientCount,
+  onNotify,
+}: VaccinationDriveProps) {
   return (
     <BentoLarge style={styles.bentoLarge}>
       <div style={styles.bentoContent}>
         <p style={styles.bentoLabel}>Campaña de Vacunación</p>
-        <p style={styles.bentoTitle}>{patientCount} pacientes necesitan refuerzo esta semana.</p>
-        <button style={styles.bentoButton} onClick={onNotify}>Enviar Notificaciones</button>
+        <p style={styles.bentoTitle}>
+          {patientCount} pacientes necesitan refuerzo esta semana.
+        </p>
+        <button style={styles.bentoButton} onClick={onNotify}>
+          Enviar Notificaciones
+        </button>
       </div>
     </BentoLarge>
   );
@@ -63,7 +66,14 @@ export function SpeciesMix({ data }: SpeciesMixProps) {
       </div>
       <div style={styles.speciesBar}>
         {data.map((item) => (
-          <div key={item.label} style={{ ...styles.speciesBarFill, width: `${item.percentage}%`, background: item.color }} />
+          <div
+            key={item.label}
+            style={{
+              ...styles.speciesBarFill,
+              width: `${item.percentage}%`,
+              background: item.color,
+            }}
+          />
         ))}
       </div>
     </BentoMedium>
@@ -76,12 +86,14 @@ interface SatisfactionProps {
   icon?: React.ComponentType<LucideProps>;
 }
 
-export function Satisfaction({ score, reviews, icon: Icon }: SatisfactionProps) {
+export function Satisfaction({
+  score,
+  reviews,
+  icon: Icon,
+}: SatisfactionProps) {
   return (
     <BentoSmall style={styles.bentoSmall}>
-      <div style={styles.satisfactionIcon}>
-        {Icon && <Icon size={32} />}
-      </div>
+      <div style={styles.satisfactionIcon}>{Icon && <Icon size={32} />}</div>
       <p style={styles.bentoLabel}>Satisfacción del Cliente</p>
       <p style={styles.satisfactionScore}>{score}</p>
       <p style={styles.satisfactionSub}>Basado en {reviews} reseñas</p>

@@ -1,4 +1,4 @@
-import { LucideIcon, ChevronRight, PawPrint, Dog, Cat, Bird } from "lucide-react";
+import { LucideIcon, Eye, Pencil, Trash2, PawPrint, Dog, Cat, Bird } from "lucide-react";
 import { theme } from "../../lib/theme";
 
 interface PatientTableRowProps {
@@ -14,7 +14,9 @@ interface PatientTableRowProps {
     lastVisit: string;
     status: "healthy" | "checking-in" | "urgent";
   };
-  onClick?: () => void;
+  onView?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const speciesIcons: Record<string, LucideIcon> = {
@@ -24,17 +26,17 @@ const speciesIcons: Record<string, LucideIcon> = {
   default: PawPrint,
 };
 
-export function PatientTableRow({ animal, onClick }: PatientTableRowProps) {
+export function PatientTableRow({ animal, onView, onEdit, onDelete }: PatientTableRowProps) {
   const SpeciesIcon = speciesIcons[animal.species] || speciesIcons.default;
   
   const statusStyles = {
-    healthy: { bg: "#fce7f3", color: theme.primary, label: "Healthy" },
-    "checking-in": { bg: theme.primaryFixed, color: theme.onPrimaryFixedVariant, label: "Checking In" },
-    urgent: { bg: theme.tertiaryContainer, color: theme.onTertiaryContainer, label: "Urgent Notice" },
+    healthy: { bg: "#fce7f3", color: theme.primary, label: "Saludable" },
+    "checking-in": { bg: theme.primaryFixed, color: theme.onPrimaryFixedVariant, label: "En Consulta" },
+    urgent: { bg: theme.tertiaryContainer, color: theme.onTertiaryContainer, label: "Urgente" },
   };
   
   const status = statusStyles[animal.status] || statusStyles.healthy;
-  const visitLabel = animal.status === "checking-in" ? "In Consultation" : animal.status === "urgent" ? "Vaccination Overdue" : "Routine Checkup";
+  const visitLabel = animal.status === "checking-in" ? "En Consulta" : animal.status === "urgent" ? "Vacunación Vencida" : "Control de Rutina";
 
   return (
     <tr style={styles.tr}>
@@ -62,9 +64,17 @@ export function PatientTableRow({ animal, onClick }: PatientTableRowProps) {
         </span>
       </td>
       <td style={{...styles.tdLast, textAlign: "right"}}>
-        <button onClick={onClick} style={styles.actionButton}>
-          <ChevronRight size={20} color={theme.primary} />
-        </button>
+        <div style={styles.actions}>
+          <button onClick={onView} style={styles.actionButton} title="Ver">
+            <Eye size={18} color={theme.primary} />
+          </button>
+          <button onClick={onEdit} style={styles.actionButton} title="Editar">
+            <Pencil size={18} color={theme.secondary} />
+          </button>
+          <button onClick={onDelete} style={styles.actionButton} title="Eliminar">
+            <Trash2 size={18} color={theme.error} />
+          </button>
+        </div>
       </td>
     </tr>
   );
@@ -85,7 +95,8 @@ const styles = {
   visitType: { fontSize: "10px", fontWeight: "700", textTransform: "uppercase" as const, color: theme.primary },
   statusBadge: { display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: "700" },
   statusDot: { width: "8px", height: "8px", borderRadius: "50%" },
-  actionButton: { padding: "8px", borderRadius: "8px", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
+  actions: { display: "flex", gap: "4px", justifyContent: "flex-end" },
+  actionButton: { padding: "8px", borderRadius: "8px", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" },
 };
 
 export default PatientTableRow;

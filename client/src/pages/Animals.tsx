@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { animalsApi } from "../lib/api";
 import { Loader2, Dog, Cat, Bird, Filter, Smile } from "lucide-react";
@@ -16,11 +17,31 @@ import {
 } from "../components/ui/BentoGrid";
 
 export function AnimalsPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [animals, setAnimals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filterSpecies, setFilterSpecies] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Action handlers
+  function handleView(animalId: string) {
+    navigate(`/animals/${animalId}`);
+  }
+
+  function handleEdit(animalId: string) {
+    navigate(`/animals/${animalId}/edit`);
+  }
+
+  async function handleDelete(animalId: string) {
+    if (!confirm("¿Estás seguro de eliminar este paciente?")) return;
+    try {
+      await animalsApi.delete(animalId);
+      loadAnimals();
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+    }
+  }
 
   useEffect(() => {
     loadAnimals();
@@ -152,7 +173,9 @@ export function AnimalsPage() {
                 <PatientTableRow
                   key={animal.id}
                   animal={animal}
-                  onClick={() => {}}
+                  onView={() => handleView(animal.id)}
+                  onEdit={() => handleEdit(animal.id)}
+                  onDelete={() => handleDelete(animal.id)}
                 />
               ))}
             </tbody>
