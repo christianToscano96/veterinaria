@@ -1,163 +1,236 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { animalsApi } from '../lib/api';
-import { PawPrint, Plus, Search, Loader2, ChevronRight, Phone, Mail, Dog, Cat, Bird, Rabbit } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { animalsApi } from "../lib/api";
+import { Loader2, Dog, Cat, Bird, Filter, Smile } from "lucide-react";
+import { theme } from "../lib/theme";
 
-const speciesIcons: Record<string, any> = {
-  dog: Dog,
-  cat: Cat,
-  bird: Bird,
-  rabbit: Rabbit,
-};
+// Components
+import { PatientTableRow } from "../components/ui/PatientTableRow";
+import { StatCard } from "../components/ui/StatCard";
+import { FilterButton } from "../components/ui/FilterButton";
+import { Pagination } from "../components/ui/Pagination";
+import {
+  VaccinationDrive,
+  SpeciesMix,
+  Satisfaction,
+} from "../components/ui/BentoGrid";
 
 export function AnimalsPage() {
   const { user } = useAuth();
   const [animals, setAnimals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [filterSpecies, setFilterSpecies] = useState('');
+  const [filterSpecies, setFilterSpecies] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     loadAnimals();
-  }, [search, filterSpecies]);
+  }, [filterSpecies]);
 
   async function loadAnimals() {
     try {
+      setIsLoading(true);
       const params: Record<string, string> = {};
-      if (search) params.search = search;
       if (filterSpecies) params.species = filterSpecies;
-      
-      const data = await animalsApi.list(Object.keys(params).length > 0 ? params : undefined);
+      const data = await animalsApi.list(
+        Object.keys(params).length > 0 ? params : undefined,
+      );
       setAnimals(data.animals || []);
     } catch (error) {
-      console.error('Failed to load animals:', error);
+      console.error("Failed to load animals:", error);
     } finally {
       setIsLoading(false);
     }
   }
 
-  const getSpeciesIcon = (species: string) => {
-    const Icon = speciesIcons[species] || PawPrint;
-    return <Icon size={20} />;
-  };
+  // Simulated data
+  const tableData =
+    animals.length > 0
+      ? animals
+      : [
+          {
+            id: "1",
+            name: "Luna",
+            species: "dog",
+            breed: "Golden Retriever",
+            ownerName: "Eleanor Rigby",
+            ownerEmail: "erigby@example.com",
+            lastVisit: "Oct 12, 2023",
+            status: "healthy",
+            age: "4y 2m",
+          },
+          {
+            id: "2",
+            name: "Oliver",
+            species: "cat",
+            breed: "Scottish Fold",
+            ownerName: "Julian Blackwood",
+            ownerPhone: "+1 (555) 234-9812",
+            lastVisit: "Nov 04, 2023",
+            status: "checking-in",
+            age: "2y 8m",
+          },
+          {
+            id: "3",
+            name: "Pip",
+            species: "bird",
+            breed: "Budgerigar",
+            ownerName: "Martha Stewart",
+            ownerEmail: "martha.s@web.com",
+            lastVisit: "Sep 20, 2023",
+            status: "urgent",
+            age: "1y 0m",
+          },
+        ];
 
-  const isAdmin = user?.role === 'admin';
+  const speciesFilters = [
+    { key: "", label: "Todas las especies", icon: Filter },
+    { key: "dog", label: "Caninos", icon: Dog },
+    { key: "cat", label: "Felinos", icon: Cat },
+    { key: "bird", label: "Aves", icon: Bird },
+  ];
 
-  if (isLoading) {
+  const speciesData = [
+    { label: "Caninos", percentage: 62, color: theme.primary },
+    { label: "Felinos", percentage: 28, color: theme.secondary },
+    { label: "Otros", percentage: 10, color: theme.tertiary },
+  ];
+
+  if (isLoading)
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-        <Loader2 size={32} color="#9e18a6" style={{ animation: 'spin 1s linear infinite' }} />
+      <div style={styles.loading}>
+        <Loader2
+          size={32}
+          color={theme.primary}
+          style={{ animation: "spin 1s linear infinite" }}
+        />
       </div>
     );
-  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+    <div style={styles.container}>
+      {/* Filters & Stats */}
+      <div style={styles.filtersRow}>
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#221921' }}>Pacientes</h1>
-          <p style={{ color: '#814974', marginTop: '4px' }}>{animals.length} pacientes activos</p>
+          <h3 style={styles.title}>Gestión de Pacientes</h3>
+          <div style={styles.filters}>
+            {speciesFilters.map((f) => (
+              <FilterButton
+                key={f.key}
+                icon={f.icon}
+                label={f.label}
+                isActive={filterSpecies === f.key}
+                onClick={() => setFilterSpecies(f.key)}
+              />
+            ))}
+          </div>
         </div>
-        {isAdmin && (
-          <Link to="/animals/new" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', background: '#9e18a6', color: 'white', borderRadius: '10px', fontWeight: '600', textDecoration: 'none', transition: 'background 0.2s' }}>
-            <Plus size={20} />
-            Nuevo paciente
-          </Link>
-        )}
-      </div>
-
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-          <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-          <input
-            type="text"
-            placeholder="Buscar por nombre o dueño..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ width: '100%', padding: '12px 12px 12px 48px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '15px', outline: 'none', background: 'white' }}
+        <div style={styles.stats}>
+          <StatCard
+            label="Activos"
+            value={tableData.length}
+            color={theme.secondary}
           />
+          <StatCard label="Vencidos" value={3} color={theme.tertiary} />
         </div>
-        <select
-          value={filterSpecies}
-          onChange={(e) => setFilterSpecies(e.target.value)}
-          style={{ padding: '12px 16px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '15px', background: 'white', minWidth: '150px' }}
-        >
-          <option value="">Todas las espécies</option>
-          <option value="dog">Perro</option>
-          <option value="cat">Gato</option>
-          <option value="bird">Pájaro</option>
-          <option value="rabbit">Conejo</option>
-          <option value="other">Otro</option>
-        </select>
       </div>
 
-      {/* Animals List */}
-      {animals.length === 0 ? (
-        <div style={emptyStateStyle}>
-          <PawPrint size={48} style={{ opacity: 0.3, marginBottom: '12px' }} />
-          <p style={{ fontWeight: '600', color: '#64748b' }}>No hay pacientes</p>
-          <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
-            {search || filterSpecies ? 'No se encontraron resultados' : 'Agregá tu primer paciente'}
-          </p>
+      {/* Table */}
+      <section style={styles.tableSection}>
+        <div style={styles.tableWrapper}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Nombre y Raza</th>
+                <th style={styles.th}>Dueño Principal</th>
+                <th style={styles.th}>Última Visita</th>
+                <th style={styles.th}>Estado de Salud</th>
+                <th style={{ ...styles.th, textAlign: "right" }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.map((animal) => (
+                <PatientTableRow
+                  key={animal.id}
+                  animal={animal}
+                  onClick={() => {}}
+                />
+              ))}
+            </tbody>
+          </table>
         </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {animals.map((animal: any) => {
-            const animalId = animal.id || animal._id;
-            return (
-              <Link
-                key={animalId}
-                to={`/animals/${animalId}`}
-                style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', background: 'white', borderRadius: '14px', boxShadow: '0 4px 12px rgba(56, 45, 54, 0.04)', textDecoration: 'none', transition: 'all 0.2s' }}
-              >
-                {/* Species Icon */}
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(158, 24, 166, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9e18a6' }}>
-                  {getSpeciesIcon(animal.species)}
-                </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={2}
+          totalItems={1240}
+          itemsShown={tableData.length}
+          onPageChange={setCurrentPage}
+        />
+      </section>
 
-                {/* Info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <p style={{ fontWeight: '600', color: '#221921', fontSize: '16px' }}>{animal.name}</p>
-                    {animal.breed && <span style={{ fontSize: '13px', color: '#814974' }}>({animal.breed})</span>}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: '#64748b' }}>
-                      <Mail size={14} /> {animal.ownerName}
-                    </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: '#64748b' }}>
-                      <Phone size={14} /> {animal.ownerPhone}
-                    </span>
-                  </div>
-                </div>
+      {/* Bento Grid */}
+      <div style={styles.bentoGrid}>
+        <VaccinationDrive
+          patientCount={48}
+          onNotify={() => console.log("notify")}
+        />
+        <SpeciesMix data={speciesData} />
+        <Satisfaction score="98.2%" reviews="2.4k" icon={Smile} />
+      </div>
 
-                {/* Arrow */}
-                <ChevronRight size={20} color="#94a3b8" />
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }}
-      `}</style>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
 
-const emptyStateStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '60px 20px',
-  background: 'white',
-  borderRadius: '16px',
-  boxShadow: '0 4px 12px rgba(56, 45, 54, 0.04)',
+const styles = {
+  container: { display: "flex", flexDirection: "column" as const, gap: "32px" },
+  loading: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "400px",
+  },
+  filtersRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    flexWrap: "wrap" as const,
+    gap: "24px",
+  },
+  title: {
+    fontSize: "32px",
+    fontWeight: "800",
+    color: theme.onSurface,
+    marginBottom: "16px",
+  },
+  filters: { display: "flex", gap: "8px", flexWrap: "wrap" as const },
+  stats: { display: "flex", gap: "16px" },
+  tableSection: {
+    background: theme.surfaceContainerLow,
+    borderRadius: "16px",
+    padding: "24px",
+    border: `1px solid ${theme.surfaceContainer}`,
+  },
+  tableWrapper: { overflowX: "auto" as const },
+  table: {
+    width: "100%",
+    borderCollapse: "separate" as const,
+    borderSpacing: "0 16px",
+  },
+  th: {
+    padding: "8px 24px",
+    textAlign: "left" as const,
+    fontSize: "10px",
+    fontWeight: "700",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.05em",
+    color: theme.outline,
+  },
+  bentoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "24px",
+  },
 };
 
 export default AnimalsPage;
