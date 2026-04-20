@@ -11,8 +11,11 @@ import {
   LogOut,
   Menu,
   X,
+  Bell,
+  Search,
 } from "lucide-react";
 import { useState } from "react";
+import { PageHeader } from "../ui/PageHeader";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -22,6 +25,16 @@ const navItems = [
   { to: "/medical-records", label: "Historial", icon: FileText },
   { to: "/social-posts", label: "Social Media", icon: Share2 },
 ];
+
+// Page titles based on route
+const pageInfo: Record<string, { title: string; subtitle?: string }> = {
+  "/dashboard": { title: "Dashboard", subtitle: "Bienvenido de vuelta" },
+  "/animals": { title: "Pacientes", subtitle: "Gestión de pacientes" },
+  "/appointments": { title: "Turnos", subtitle: "Calendario de citas" },
+  "/vaccinations": { title: "Vacunas", subtitle: "Control de vacunas" },
+  "/medical-records": { title: "Historial Médico", subtitle: "Registros clínicos" },
+  "/social-posts": { title: "Social Media", subtitle: "Publicaciones" },
+};
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -155,8 +168,29 @@ export function AppLayout({ children }: AppLayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0" style={{ backgroundColor: 'rgb(255, 247, 250)' }}>
-        <div className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</div>
+      <main className="lg:ml-64" style={{ backgroundColor: 'rgb(255, 247, 250)', minHeight: '100vh', paddingTop: '0' }}>
+        {/* Global Page Header */}
+        <PageHeader
+          title={pageInfo[location.pathname]?.title || 'Veterinaria Pandy'}
+          subtitle={pageInfo[location.pathname]?.subtitle}
+          showSearch={true}
+          searchPlaceholder="Buscar..."
+          onSearch={(value) => console.log('search:', value)}
+          actions={[
+            { icon: Bell, onClick: () => console.log('notifications'), label: 'Notificaciones' }
+          ]}
+          containerStyle={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+            padding: '20px 32px',
+            margin: 0,
+            borderRadius: 0,
+            borderBottom: '1px solid #d7c0d1',
+          }}
+        />
+        
+        <div className="p-8">{children}</div>
       </main>
     </div>
   );
