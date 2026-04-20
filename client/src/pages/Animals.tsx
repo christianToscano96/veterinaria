@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { animalsApi } from "../lib/api";
-import { Loader2, Dog, Cat, Bird, Filter, Smile } from "lucide-react";
+import { Loader2, Dog, Cat, Bird, Filter, Smile, Plus } from "lucide-react";
 import { theme } from "../lib/theme";
 
 // Components
@@ -30,7 +30,7 @@ export function AnimalsPage() {
   }
 
   function handleEdit(animalId: string) {
-    navigate(`/animals/${animalId}/edit`);
+    navigate(`/animals/edit/${animalId}`);
   }
 
   async function handleDelete(animalId: string) {
@@ -145,13 +145,19 @@ export function AnimalsPage() {
             ))}
           </div>
         </div>
-        <div style={styles.stats}>
-          <StatCard
-            label="Activos"
-            value={tableData.length}
-            color={theme.secondary}
-          />
-          <StatCard label="Vencidos" value={3} color={theme.tertiary} />
+        <div style={styles.rightSection}>
+          <button onClick={() => navigate("/animals/new")} style={styles.addButton}>
+            <Plus size={18} />
+            Nuevo Paciente
+          </button>
+          <div style={styles.stats}>
+            <StatCard
+              label="Activos"
+              value={tableData.length}
+              color={theme.secondary}
+            />
+            <StatCard label="Vencidos" value={3} color={theme.tertiary} />
+          </div>
         </div>
       </div>
 
@@ -227,6 +233,21 @@ const styles = {
     marginBottom: "16px",
   },
   filters: { display: "flex", gap: "8px", flexWrap: "wrap" as const },
+  rightSection: { display: "flex", alignItems: "center", gap: "24px" },
+  addButton: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "12px 20px",
+    background: theme.primary,
+    color: theme.onPrimary,
+    borderRadius: "12px",
+    border: "none",
+    fontSize: "14px",
+    fontWeight: "700",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
   stats: { display: "flex", gap: "16px" },
   tableSection: {
     background: theme.surfaceContainerLow,

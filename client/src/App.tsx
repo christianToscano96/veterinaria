@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import LoginPage from "./pages/Login";
 import DashboardPage from "./pages/Dashboard";
 import AnimalsPage from "./pages/Animals";
+import PatientDetailPage from "./pages/PatientDetail";
 import AnimalFormPage from "./pages/AnimalForm";
 import AppointmentsPage from "./pages/Appointments";
 import AppointmentFormPage from "./pages/AppointmentForm";
@@ -123,10 +124,18 @@ export default function App() {
             }
           />
           <Route
-            path="/animals/:id"
+            path="/animals/edit/:id"
             element={
               <ProtectedRoute>
                 <AnimalFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/animals/:id"
+            element={
+              <ProtectedRoute>
+                <PatientDetailPage />
               </ProtectedRoute>
             }
           />

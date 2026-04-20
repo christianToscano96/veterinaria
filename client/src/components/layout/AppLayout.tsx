@@ -32,7 +32,10 @@ const pageInfo: Record<string, { title: string; subtitle?: string }> = {
   "/animals": { title: "Pacientes", subtitle: "Gestión de pacientes" },
   "/appointments": { title: "Turnos", subtitle: "Calendario de citas" },
   "/vaccinations": { title: "Vacunas", subtitle: "Control de vacunas" },
-  "/medical-records": { title: "Historial Médico", subtitle: "Registros clínicos" },
+  "/medical-records": {
+    title: "Historial Médico",
+    subtitle: "Registros clínicos",
+  },
   "/social-posts": { title: "Social Media", subtitle: "Publicaciones" },
 };
 
@@ -168,28 +171,39 @@ export function AppLayout({ children }: AppLayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="lg:ml-64" style={{ backgroundColor: 'rgb(255, 247, 250)', minHeight: '100vh', paddingTop: '0' }}>
+      <main
+        className="lg:ml-64"
+        style={{
+          backgroundColor: "rgb(255, 247, 250)",
+          minHeight: "100vh",
+          paddingTop: "0",
+        }}
+      >
         {/* Global Page Header */}
         <PageHeader
-          title={pageInfo[location.pathname]?.title || 'Veterinaria Pandy'}
+          title={pageInfo[location.pathname]?.title || ""}
           subtitle={pageInfo[location.pathname]?.subtitle}
           showSearch={true}
           searchPlaceholder="Buscar..."
-          onSearch={(value) => console.log('search:', value)}
+          onSearch={(value) => console.log("search:", value)}
           actions={[
-            { icon: Bell, onClick: () => console.log('notifications'), label: 'Notificaciones' }
+            {
+              icon: Bell,
+              onClick: () => console.log("notifications"),
+              label: "Notificaciones",
+            },
           ]}
           containerStyle={{
-            position: 'sticky',
+            position: "sticky",
             top: 0,
             zIndex: 10,
-            padding: '20px 32px',
+            padding: "20px 32px",
             margin: 0,
             borderRadius: 0,
-            borderBottom: '1px solid #d7c0d1',
+            borderBottom: "1px solid #d7c0d1",
           }}
         />
-        
+
         <div className="p-8">{children}</div>
       </main>
     </div>
