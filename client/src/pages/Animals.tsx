@@ -2,10 +2,24 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { animalsApi, vaccinationsApi } from "../lib/api";
-import { 
-  Loader2, Dog, Cat, Bird, Filter, Smile, Plus, 
-  Search, ArrowUp, ArrowDown, ChevronDown, ChevronUp,
-  Trash2, Download, Check, X, Bell
+import {
+  Loader2,
+  Dog,
+  Cat,
+  Bird,
+  Filter,
+  Smile,
+  Plus,
+  Search,
+  ArrowUp,
+  ArrowDown,
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+  Download,
+  Check,
+  X,
+  Bell,
 } from "lucide-react";
 import { theme } from "../lib/theme";
 
@@ -48,24 +62,81 @@ function SkeletonRow() {
     <tr>
       <td style={{ padding: "20px 24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "56px", height: "56px", borderRadius: "12px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite" }} />
+          <div
+            style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "12px",
+              background: theme.surfaceContainerHighest,
+              animation: "pulse 1.5s infinite",
+            }}
+          />
           <div>
-            <div style={{ width: "120px", height: "16px", borderRadius: "4px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite", marginBottom: "8px" }} />
-            <div style={{ width: "80px", height: "12px", borderRadius: "4px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite" }} />
+            <div
+              style={{
+                width: "120px",
+                height: "16px",
+                borderRadius: "4px",
+                background: theme.surfaceContainerHighest,
+                animation: "pulse 1.5s infinite",
+                marginBottom: "8px",
+              }}
+            />
+            <div
+              style={{
+                width: "80px",
+                height: "12px",
+                borderRadius: "4px",
+                background: theme.surfaceContainerHighest,
+                animation: "pulse 1.5s infinite",
+              }}
+            />
           </div>
         </div>
       </td>
       <td style={{ padding: "20px 24px" }}>
-        <div style={{ width: "100px", height: "14px", borderRadius: "4px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite" }} />
+        <div
+          style={{
+            width: "100px",
+            height: "14px",
+            borderRadius: "4px",
+            background: theme.surfaceContainerHighest,
+            animation: "pulse 1.5s infinite",
+          }}
+        />
       </td>
       <td style={{ padding: "20px 24px" }}>
-        <div style={{ width: "80px", height: "14px", borderRadius: "4px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite" }} />
+        <div
+          style={{
+            width: "80px",
+            height: "14px",
+            borderRadius: "4px",
+            background: theme.surfaceContainerHighest,
+            animation: "pulse 1.5s infinite",
+          }}
+        />
       </td>
       <td style={{ padding: "20px 24px" }}>
-        <div style={{ width: "70px", height: "24px", borderRadius: "20px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite" }} />
+        <div
+          style={{
+            width: "70px",
+            height: "24px",
+            borderRadius: "20px",
+            background: theme.surfaceContainerHighest,
+            animation: "pulse 1.5s infinite",
+          }}
+        />
       </td>
       <td style={{ padding: "20px 24px" }}>
-        <div style={{ width: "80px", height: "32px", borderRadius: "8px", background: theme.surfaceContainerHighest, animation: "pulse 1.5s infinite" }} />
+        <div
+          style={{
+            width: "80px",
+            height: "32px",
+            borderRadius: "8px",
+            background: theme.surfaceContainerHighest,
+            animation: "pulse 1.5s infinite",
+          }}
+        />
       </td>
     </tr>
   );
@@ -74,27 +145,27 @@ function SkeletonRow() {
 export function AnimalsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filterSpecies, setFilterSpecies] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Search & Sort
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-  
+
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
-  
+
   // Expanded row
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  
+
   // Toast
   const [toast, setToast] = useState<Toast | null>(null);
-  
+
   // Stats
   const [overdueCount, setOverdueCount] = useState(0);
 
@@ -107,13 +178,13 @@ export function AnimalsPage() {
       setIsLoading(true);
       const params: Record<string, string> = {};
       if (filterSpecies) params.species = filterSpecies;
-      
+
       const [animalsData, vaccinationsData] = await Promise.all([
         animalsApi.list(Object.keys(params).length > 0 ? params : undefined),
         vaccinationsApi.overdue(),
       ]);
-      
-      setAnimals(animalsData.animals as Animal[] || []);
+
+      setAnimals((animalsData.animals as Animal[]) || []);
       setOverdueCount((vaccinationsData as any).vaccinations?.length || 0);
     } catch (error) {
       console.error("Failed to load animals:", error);
@@ -125,44 +196,48 @@ export function AnimalsPage() {
   // Filter & sort data
   const filteredData = useMemo(() => {
     let data = [...animals];
-    
+
     // Search
     if (search) {
       const s = search.toLowerCase();
-      data = data.filter(a => 
-        a.name.toLowerCase().includes(s) ||
-        a.breed?.toLowerCase().includes(s) ||
-        a.ownerName.toLowerCase().includes(s)
+      data = data.filter(
+        (a) =>
+          a.name.toLowerCase().includes(s) ||
+          a.breed?.toLowerCase().includes(s) ||
+          a.ownerName.toLowerCase().includes(s),
       );
     }
-    
+
     // Sort
     data.sort((a, b) => {
       let aVal = a[sortField];
       let bVal = b[sortField];
-      
+
       if (sortField === "lastVisit") {
         aVal = new Date(a.lastVisit).getTime();
         bVal = new Date(b.lastVisit).getTime();
       }
-      
+
       if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
       if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
-    
+
     return data;
   }, [animals, search, sortField, sortOrder]);
 
   // Pagination
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   // Species counts
   const speciesCounts = useMemo(() => {
     const counts: Record<string, number> = { "": animals.length };
-    animals.forEach(a => {
+    animals.forEach((a) => {
       counts[a.species] = (counts[a.species] || 0) + 1;
     });
     return counts;
@@ -216,7 +291,7 @@ export function AnimalsPage() {
     if (selectedIds.size === paginatedData.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(paginatedData.map(a => a.id)));
+      setSelectedIds(new Set(paginatedData.map((a) => a.id)));
     }
   }
 
@@ -231,17 +306,24 @@ export function AnimalsPage() {
   }
 
   function exportCSV() {
-    const headers = ["Nombre", "Raza", "Dueño", "Teléfono", "Última Visita", "Estado"];
-    const rows = filteredData.map(a => [
+    const headers = [
+      "Nombre",
+      "Raza",
+      "Dueño",
+      "Teléfono",
+      "Última Visita",
+      "Estado",
+    ];
+    const rows = filteredData.map((a) => [
       a.name,
       a.breed || a.species,
       a.ownerName,
       a.ownerPhone || "",
       a.lastVisit,
-      a.status
+      a.status,
     ]);
-    
-    const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
+
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -257,26 +339,70 @@ export function AnimalsPage() {
   }
 
   const speciesFilters = [
-    { key: "", label: "Todas las especies", icon: Filter, count: speciesCounts[""] },
-    { key: "dog", label: "Caninos", icon: Dog, count: speciesCounts["dog"] || 0 },
-    { key: "cat", label: "Felinos", icon: Cat, count: speciesCounts["cat"] || 0 },
-    { key: "bird", label: "Aves", icon: Bird, count: speciesCounts["bird"] || 0 },
+    {
+      key: "",
+      label: "Todas las especies",
+      icon: Filter,
+      count: speciesCounts[""],
+    },
+    {
+      key: "dog",
+      label: "Caninos",
+      icon: Dog,
+      count: speciesCounts["dog"] || 0,
+    },
+    {
+      key: "cat",
+      label: "Felinos",
+      icon: Cat,
+      count: speciesCounts["cat"] || 0,
+    },
+    {
+      key: "bird",
+      label: "Aves",
+      icon: Bird,
+      count: speciesCounts["bird"] || 0,
+    },
   ];
 
   const speciesData = [
-    { label: "Caninos", percentage: speciesCounts["dog"] ? Math.round((speciesCounts["dog"] / animals.length) * 100) : 0, color: theme.primary },
-    { label: "Felinos", percentage: speciesCounts["cat"] ? Math.round((speciesCounts["cat"] / animals.length) * 100) : 0, color: theme.secondary },
-    { label: "Otros", percentage: 100 - ((speciesCounts["dog"] || 0) / animals.length * 100) - ((speciesCounts["cat"] || 0) / animals.length * 100), color: theme.tertiary },
+    {
+      label: "Caninos",
+      percentage: speciesCounts["dog"]
+        ? Math.round((speciesCounts["dog"] / animals.length) * 100)
+        : 0,
+      color: theme.primary,
+    },
+    {
+      label: "Felinos",
+      percentage: speciesCounts["cat"]
+        ? Math.round((speciesCounts["cat"] / animals.length) * 100)
+        : 0,
+      color: theme.secondary,
+    },
+    {
+      label: "Otros",
+      percentage:
+        100 -
+        ((speciesCounts["dog"] || 0) / animals.length) * 100 -
+        ((speciesCounts["cat"] || 0) / animals.length) * 100,
+      color: theme.tertiary,
+    },
   ];
 
   return (
     <div style={styles.container}>
       {/* Toast */}
       {toast && (
-        <div style={{
-          ...styles.toast,
-          background: toast.type === "success" ? theme.secondaryContainer : theme.errorContainer,
-        }}>
+        <div
+          style={{
+            ...styles.toast,
+            background:
+              toast.type === "success"
+                ? theme.secondaryContainer
+                : theme.errorContainer,
+          }}
+        >
           {toast.type === "success" ? <Check size={16} /> : <X size={16} />}
           {toast.message}
         </div>
@@ -286,7 +412,7 @@ export function AnimalsPage() {
       <div style={styles.filtersRow}>
         <div style={styles.leftSection}>
           <h3 style={styles.title}>Gestión de Pacientes</h3>
-          
+
           {/* Search */}
           <div style={styles.searchBox}>
             <Search size={18} style={{ color: theme.onSurfaceVariant }} />
@@ -303,7 +429,7 @@ export function AnimalsPage() {
               </button>
             )}
           </div>
-          
+
           {/* Filters */}
           <div style={styles.filters}>
             {speciesFilters.map((f) => (
@@ -317,15 +443,26 @@ export function AnimalsPage() {
             ))}
           </div>
         </div>
-        
+
         <div style={styles.rightSection}>
-          <button onClick={() => navigate("/animals/new")} style={styles.addButton}>
+          <button
+            onClick={() => navigate("/animals/new")}
+            style={styles.addButton}
+          >
             <Plus size={18} />
             Nuevo Paciente
           </button>
           <div style={styles.stats}>
-            <StatCard label="Activos" value={animals.length} color={theme.secondary} />
-            <StatCard label="Vencidos" value={overdueCount} color={theme.tertiary} />
+            <StatCard
+              label="Activos"
+              value={animals.length}
+              color={theme.secondary}
+            />
+            <StatCard
+              label="Vencidos"
+              value={overdueCount}
+              color={theme.tertiary}
+            />
           </div>
         </div>
       </div>
@@ -338,7 +475,13 @@ export function AnimalsPage() {
             <Trash2 size={16} />
             Eliminar
           </button>
-          <button onClick={() => { setSelectedIds(new Set()); setShowBulkActions(false); }} style={styles.bulkCancel}>
+          <button
+            onClick={() => {
+              setSelectedIds(new Set());
+              setShowBulkActions(false);
+            }}
+            style={styles.bulkCancel}
+          >
             <X size={16} />
             Cancelar
           </button>
@@ -352,11 +495,17 @@ export function AnimalsPage() {
           <label style={styles.checkbox}>
             <input
               type="checkbox"
-              checked={selectedIds.size === paginatedData.length && paginatedData.length > 0}
+              checked={
+                selectedIds.size === paginatedData.length &&
+                paginatedData.length > 0
+              }
               onChange={toggleSelectAll}
             />
           </label>
-          <button onClick={() => setShowBulkActions(!showBulkActions)} style={styles.bulkToggle}>
+          <button
+            onClick={() => setShowBulkActions(!showBulkActions)}
+            style={styles.bulkToggle}
+          >
             <Checkbox size={16} />
           </button>
           <button onClick={exportCSV} style={styles.exportBtn}>
@@ -373,35 +522,73 @@ export function AnimalsPage() {
                 <tr>
                   <th style={{ ...styles.th, width: "40px" }}></th>
                   <th style={styles.th}>
-                    <button onClick={() => handleSort("name")} style={styles.thButton}>
+                    <button
+                      onClick={() => handleSort("name")}
+                      style={styles.thButton}
+                    >
                       Nombre y Raza
-                      {sortField === "name" && (sortOrder === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
+                      {sortField === "name" &&
+                        (sortOrder === "asc" ? (
+                          <ArrowUp size={12} />
+                        ) : (
+                          <ArrowDown size={12} />
+                        ))}
                     </button>
                   </th>
                   <th style={styles.th}>
-                    <button onClick={() => handleSort("ownerName")} style={styles.thButton}>
+                    <button
+                      onClick={() => handleSort("ownerName")}
+                      style={styles.thButton}
+                    >
                       Dueño Principal
-                      {sortField === "ownerName" && (sortOrder === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
+                      {sortField === "ownerName" &&
+                        (sortOrder === "asc" ? (
+                          <ArrowUp size={12} />
+                        ) : (
+                          <ArrowDown size={12} />
+                        ))}
                     </button>
                   </th>
                   <th style={styles.th}>
-                    <button onClick={() => handleSort("lastVisit")} style={styles.thButton}>
+                    <button
+                      onClick={() => handleSort("lastVisit")}
+                      style={styles.thButton}
+                    >
                       Última Visita
-                      {sortField === "lastVisit" && (sortOrder === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
+                      {sortField === "lastVisit" &&
+                        (sortOrder === "asc" ? (
+                          <ArrowUp size={12} />
+                        ) : (
+                          <ArrowDown size={12} />
+                        ))}
                     </button>
                   </th>
                   <th style={styles.th}>
-                    <button onClick={() => handleSort("status")} style={styles.thButton}>
+                    <button
+                      onClick={() => handleSort("status")}
+                      style={styles.thButton}
+                    >
                       Estado
-                      {sortField === "status" && (sortOrder === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
+                      {sortField === "status" &&
+                        (sortOrder === "asc" ? (
+                          <ArrowUp size={12} />
+                        ) : (
+                          <ArrowDown size={12} />
+                        ))}
                     </button>
                   </th>
-                  <th style={{ ...styles.th, textAlign: "right", width: "120px" }}>Acciones</th>
+                  <th
+                    style={{ ...styles.th, textAlign: "right", width: "120px" }}
+                  >
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
-                  Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                  ))
                 ) : paginatedData.length === 0 ? (
                   <tr>
                     <td colSpan={6} style={styles.emptyState}>
@@ -419,7 +606,11 @@ export function AnimalsPage() {
                       onView={() => handleView(animal.id)}
                       onEdit={() => handleEdit(animal.id)}
                       onDelete={() => handleDelete(animal.id)}
-                      onToggleExpand={() => setExpandedId(expandedId === animal.id ? null : animal.id)}
+                      onToggleExpand={() =>
+                        setExpandedId(
+                          expandedId === animal.id ? null : animal.id,
+                        )
+                      }
                       onToggleSelect={() => toggleSelect(animal.id)}
                     />
                   ))
@@ -432,8 +623,8 @@ export function AnimalsPage() {
         {/* Mobile Cards */}
         <div className="mobile-only" style={styles.mobileCards}>
           {paginatedData.map((animal) => (
-            <div 
-              key={animal.id} 
+            <div
+              key={animal.id}
               style={styles.mobileCard}
               onClick={() => handleView(animal.id)}
             >
@@ -449,14 +640,19 @@ export function AnimalsPage() {
                 </div>
                 <div>
                   <p style={styles.mobileCardName}>{animal.name}</p>
-                  <p style={styles.mobileCardBreed}>{animal.breed || animal.species}</p>
+                  <p style={styles.mobileCardBreed}>
+                    {animal.breed || animal.species}
+                  </p>
                 </div>
               </div>
               <div style={styles.mobileCardInfo}>
                 <span>Dueño: {animal.ownerName}</span>
                 <span>Última visita: {animal.lastVisit}</span>
               </div>
-              <ChevronDown size={16} style={{ color: theme.onSurfaceVariant }} />
+              <ChevronDown
+                size={16}
+                style={{ color: theme.onSurfaceVariant }}
+              />
             </div>
           ))}
         </div>
@@ -477,7 +673,11 @@ export function AnimalsPage() {
           onNotify={() => navigate("/vaccinations/overdue")}
         />
         <SpeciesMix data={speciesData} />
-        <Satisfaction score="98.2%" reviews={animals.length.toString()} icon={Smile} />
+        <Satisfaction
+          score="98.2%"
+          reviews={animals.length.toString()}
+          icon={Smile}
+        />
       </div>
 
       <style>{`
@@ -508,7 +708,14 @@ export function AnimalsPage() {
 // Checkbox icon component
 function Checkbox({ size }: { size: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="3" y="3" width="18" height="18" rx="2" />
     </svg>
   );
