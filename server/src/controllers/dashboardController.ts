@@ -65,7 +65,7 @@ export const getStats = async (req: Request, res: Response): Promise<void> => {
 
     successResponse(res, {
       totalAnimals,
-      todayAppointments,
+      appointmentsToday: todayAppointments,
       pendingVaccinations,
       draftPosts,
     });
