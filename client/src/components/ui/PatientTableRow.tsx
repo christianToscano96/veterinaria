@@ -14,9 +14,13 @@ interface PatientTableRowProps {
     lastVisit: string;
     status: "healthy" | "checking-in" | "urgent";
   };
+  isExpanded?: boolean;
+  isSelected?: boolean;
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onToggleExpand?: () => void;
+  onToggleSelect?: () => void;
 }
 
 const speciesIcons: Record<string, LucideIcon> = {
@@ -26,7 +30,16 @@ const speciesIcons: Record<string, LucideIcon> = {
   default: PawPrint,
 };
 
-export function PatientTableRow({ animal, onView, onEdit, onDelete }: PatientTableRowProps) {
+export function PatientTableRow({ 
+  animal, 
+  isExpanded = false,
+  isSelected = false,
+  onView, 
+  onEdit, 
+  onDelete,
+  onToggleExpand,
+  onToggleSelect 
+}: PatientTableRowProps) {
   const SpeciesIcon = speciesIcons[animal.species] || speciesIcons.default;
   
   const statusStyles = {
@@ -39,8 +52,23 @@ export function PatientTableRow({ animal, onView, onEdit, onDelete }: PatientTab
   const visitLabel = animal.status === "checking-in" ? "En Consulta" : animal.status === "urgent" ? "Vacunación Vencida" : "Control de Rutina";
 
   return (
-    <tr style={styles.tr}>
-      <td style={styles.tdFirst}>
+    <>
+    <tr style={{ 
+      ...styles.tr, 
+      background: isSelected ? theme.primaryContainer : isExpanded ? theme.surfaceContainerLow : theme.surfaceContainerLowest,
+      cursor: "pointer"
+    }}
+    >
+      <td style={styles.tdCheckbox}>
+        <input 
+          type="checkbox" 
+          checked={isSelected} 
+          onChange={onToggleSelect}
+          onClick={(e) => e.stopPropagation()}
+          style={styles.checkbox}
+        />
+      </td>
+      <td style={styles.tdFirst} onClick={onToggleExpand}>
         <div style={styles.petInfo}>
           <div style={styles.petAvatar}><SpeciesIcon size={16} /></div>
           <div>
@@ -77,14 +105,37 @@ export function PatientTableRow({ animal, onView, onEdit, onDelete }: PatientTab
         </div>
       </td>
     </tr>
+    {isExpanded && (
+      <tr style={styles.expandedRow}>
+        <td colSpan={5} style={styles.expandedContent}>
+          <div style={styles.expandedGrid}>
+            <div>
+              <p style={styles.expandedLabel}>Teléfono</p>
+              <p>{animal.ownerPhone || "No registrado"}</p>
+            </div>
+            <div>
+              <p style={styles.expandedLabel}>Email</p>
+              <p>{animal.ownerEmail || "No registrado"}</p>
+            </div>
+            <div style={styles.expandedActions}>
+              <button onClick={onView} style={styles.expandedBtn}>Ver Detalle</button>
+              <button onClick={onEdit} style={styles.expandedBtnSecondary}>Editar</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    )}
+    </>
   );
 }
 
 const styles = {
   tr: { background: theme.surfaceContainerLowest, transition: "all 0.3s" },
-  tdFirst: { padding: "20px 24px", borderTop: `1px solid ${theme.surfaceContainer}`, borderBottom: `1px solid ${theme.surfaceContainer}`, borderLeft: `1px solid ${theme.surfaceContainer}`, borderTopLeftRadius: "12px", borderBottomLeftRadius: "12px" },
+  tdCheckbox: { padding: "20px 12px", borderTop: `1px solid ${theme.surfaceContainer}`, borderBottom: `1px solid ${theme.surfaceContainer}`, borderLeft: `1px solid ${theme.surfaceContainer}`, borderTopLeftRadius: "12px", borderBottomLeftRadius: "12px" },
+  tdFirst: { padding: "20px 24px", borderTop: `1px solid ${theme.surfaceContainer}`, borderBottom: `1px solid ${theme.surfaceContainer}`, borderLeft: `none` },
   td: { padding: "20px 24px", borderTop: `1px solid ${theme.surfaceContainer}`, borderBottom: `1px solid ${theme.surfaceContainer}` },
   tdLast: { padding: "20px 24px", borderTop: `1px solid ${theme.surfaceContainer}`, borderBottom: `1px solid ${theme.surfaceContainer}`, borderRight: `1px solid ${theme.surfaceContainer}`, borderTopRightRadius: "12px", borderBottomRightRadius: "12px" },
+  checkbox: { width: "18px", height: "18px", cursor: "pointer" },
   petInfo: { display: "flex", alignItems: "center", gap: "12px" },
   petAvatar: { width: "56px", height: "56px", borderRadius: "12px", background: theme.surfaceContainerHighest, display: "flex", alignItems: "center", justifyContent: "center", color: theme.primary },
   petName: { fontSize: "16px", fontWeight: "700", color: theme.primary },
@@ -97,6 +148,13 @@ const styles = {
   statusDot: { width: "8px", height: "8px", borderRadius: "50%" },
   actions: { display: "flex", gap: "4px", justifyContent: "flex-end" },
   actionButton: { padding: "8px", borderRadius: "8px", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" },
+  expandedRow: { background: theme.surfaceContainerLow },
+  expandedContent: { padding: "20px 24px", borderBottom: `1px solid ${theme.surfaceContainer}` },
+  expandedGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" },
+  expandedLabel: { fontSize: "11px", color: theme.onSurfaceVariant, fontWeight: "600", textTransform: "uppercase" as const, marginBottom: "4px" },
+  expandedActions: { display: "flex", gap: "12px", alignItems: "flex-end" },
+  expandedBtn: { padding: "8px 16px", background: theme.primary, color: theme.onPrimary, borderRadius: "8px", border: "none", fontSize: "13px", fontWeight: "600", cursor: "pointer" },
+  expandedBtnSecondary: { padding: "8px 16px", background: "transparent", color: theme.primary, borderRadius: "8px", border: `1px solid ${theme.primary}`, fontSize: "13px", fontWeight: "600", cursor: "pointer" },
 };
 
 export default PatientTableRow;

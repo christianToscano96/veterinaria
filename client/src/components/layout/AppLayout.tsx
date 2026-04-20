@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -47,6 +47,14 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Routes where PageHeader should be hidden
+  const hideHeaderRoutes = useMemo(() => [
+    /^\/animals\/[^/]+$/,  // /animals/:id
+    /^\/animals\/edit\/[^/]+$/,  // /animals/edit/:id
+  ], []);
+
+  const shouldShowHeader = !hideHeaderRoutes.some(pattern => pattern.test(location.pathname));
 
   return (
     <div className="min-h-screen bg-background">
@@ -179,30 +187,32 @@ export function AppLayout({ children }: AppLayoutProps) {
           paddingTop: "0",
         }}
       >
-        {/* Global Page Header */}
-        <PageHeader
-          title={pageInfo[location.pathname]?.title || ""}
-          subtitle={pageInfo[location.pathname]?.subtitle}
-          showSearch={true}
-          searchPlaceholder="Buscar..."
-          onSearch={(value) => console.log("search:", value)}
-          actions={[
-            {
-              icon: Bell,
-              onClick: () => console.log("notifications"),
-              label: "Notificaciones",
-            },
-          ]}
-          containerStyle={{
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
-            padding: "20px 32px",
-            margin: 0,
-            borderRadius: 0,
-            borderBottom: "1px solid #d7c0d1",
-          }}
-        />
+        {/* Global Page Header - hidden on detail pages */}
+        {shouldShowHeader && (
+          <PageHeader
+            title={pageInfo[location.pathname]?.title || ""}
+            subtitle={pageInfo[location.pathname]?.subtitle}
+            showSearch={true}
+            searchPlaceholder="Buscar..."
+            onSearch={(value) => console.log("search:", value)}
+            actions={[
+              {
+                icon: Bell,
+                onClick: () => console.log("notifications"),
+                label: "Notificaciones",
+              },
+            ]}
+            containerStyle={{
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
+              padding: "20px 32px",
+              margin: 0,
+              borderRadius: 0,
+              borderBottom: "1px solid #d7c0d1",
+            }}
+          />
+        )}
 
         <div className="p-8">{children}</div>
       </main>
