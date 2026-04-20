@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { styles, theme } from "../../lib/theme";
+import { Sparkline, MiniSparkline } from "./Sparkline";
 
 interface KpiCardProps {
   title: string;
@@ -9,6 +10,7 @@ interface KpiCardProps {
   color: string;
   trend: string;
   trendType?: "positive" | "negative" | "neutral" | "warning";
+  sparklineData?: number[];  // Optional trend data for sparkline
 }
 
 export function KpiCard({
@@ -19,6 +21,7 @@ export function KpiCard({
   color,
   trend,
   trendType = "neutral",
+  sparklineData,
 }: KpiCardProps) {
   const trendColors = {
     positive: { bg: "#dcfce7", color: "#166534" },
@@ -39,15 +42,20 @@ export function KpiCard({
           alignItems: "flex-end",
         }}
       >
-        <h2
-          style={{
-            fontSize: "32px",
-            fontWeight: 800,
-            color: theme.onSurface,
-          }}
-        >
-          {value}
-        </h2>
+        <div style={{ display: "flex", alignItems: "baseline", gap: "12px" }}>
+          <h2
+            style={{
+              fontSize: "32px",
+              fontWeight: 800,
+              color: theme.onSurface,
+            }}
+          >
+            {value}
+          </h2>
+          {sparklineData && sparklineData.length > 1 && (
+            <MiniSparkline data={sparklineData} color={color} />
+          )}
+        </div>
         <div
           style={{
             fontSize: "12px",

@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   Phone,
   FileText,
+  DollarSign,
 } from "lucide-react";
 import { theme } from "../lib/theme";
 
@@ -19,12 +20,14 @@ import { VaccinationAlert } from "../components/ui/VaccinationAlert";
 import { QuickActionButton } from "../components/ui/QuickActionButton";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { DonutChart } from "../components/ui/DonutChart";
+import { BarChart, SimpleBarChart } from "../components/ui/BarChart";
+import { LineChart } from "../components/ui/LineChart";
 
 interface Stats {
   totalAnimals: number;
   appointmentsToday: number;
   pendingVaccinations: number;
-  draftPosts: number;
+  dailyIncome: number;
 }
 
 interface Appointment {
@@ -50,7 +53,7 @@ export function DashboardPage() {
     totalAnimals: 0,
     appointmentsToday: 0,
     pendingVaccinations: 0,
-    draftPosts: 0,
+    dailyIncome: 0,
   });
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [upcomingVaccinations, setUpcomingVaccinations] = useState<Vaccination[]>([]);
@@ -79,16 +82,21 @@ export function DashboardPage() {
     }
   }
 
+  // Sparkline data para KPIs - declared first
+  const patientsSparkline = [45, 48, 52, 50, 55, 58, 62];
+  const appointmentsSparkline = [8, 12, 15, 10, 18, 12, 6];
+
   // KPI Cards data
   const kpiCards = [
     {
-      title: "Pacientes Hoy",
+      title: "Pacientes",
       value: stats.totalAnimals.toString(),
       subtitle: "Activos",
       icon: PawPrint,
       color: theme.primary,
       trend: "+12% vs promedio",
       trendType: "positive" as const,
+      sparklineData: patientsSparkline,
     },
     {
       title: "Turnos Hoy",
@@ -98,9 +106,10 @@ export function DashboardPage() {
       color: theme.secondary,
       trend: "Steady",
       trendType: "neutral" as const,
+      sparklineData: appointmentsSparkline,
     },
     {
-      title: "Vacunas Pendientes",
+      title: "Vacunas",
       value: stats.pendingVaccinations.toString(),
       subtitle: "Próximas 7 días",
       icon: Syringe,
@@ -109,13 +118,13 @@ export function DashboardPage() {
       trendType: stats.pendingVaccinations > 0 ? ("warning" as const) : ("positive" as const),
     },
     {
-      title: "Borradores",
-      value: stats.draftPosts.toString(),
-      subtitle: "Social Media",
-      icon: FileText,
-      color: theme.secondary,
-      trend: "Listos para publicar",
-      trendType: "neutral" as const,
+      title: "Ingresos",
+      value: `$${(stats.dailyIncome || 0).toLocaleString()}`,
+      subtitle: "Diarios",
+      icon: DollarSign,
+      color: "#22c55e",
+      trend: "Este mes",
+      trendType: "positive" as const,
     },
   ];
 
@@ -138,6 +147,37 @@ export function DashboardPage() {
     { label: "Caninos", percentage: 58, color: theme.primary },
     { label: "Felinos", percentage: 34, color: theme.secondary },
     { label: "Exóticos", percentage: 8, color: theme.tertiary },
+  ];
+
+  // Bar chart data - Turnos por día de la semana
+  const appointmentsByDayData = [
+    { label: "Lun", value: 12 },
+    { label: "Mar", value: 8 },
+    { label: "Mié", value: 15 },
+    { label: "Jue", value: 10 },
+    { label: "Vie", value: 18 },
+    { label: "Sáb", value: 6 },
+    { label: "Dom", value: 2 },
+  ];
+
+  // Line chart data - Evolución de pacientes (últimos 7 días)
+  const patientsTrendData = [
+    { label: "Lun", value: 45 },
+    { label: "Mar", value: 48 },
+    { label: "Mié", value: 52 },
+    { label: "Jue", value: 50 },
+    { label: "Vie", value: 55 },
+    { label: "Sáb", value: 58 },
+    { label: "Dom", value: 62 },
+  ];
+
+  // Heatmap data - Turnos por hora/día (simulado)
+  const heatmapData = [
+    { day: "Lun", hour: 8, value: 2 }, { day: "Lun", hour: 9, value: 4 }, { day: "Lun", hour: 10, value: 5 },
+    { day: "Mar", hour: 8, value: 1 }, { day: "Mar", hour: 9, value: 3 }, { day: "Mar", hour: 10, value: 4 },
+    { day: "Mié", hour: 8, value: 3 }, { day: "Mié", hour: 9, value: 5 }, { day: "Mié", hour: 10, value: 6 },
+    { day: "Jue", hour: 8, value: 2 }, { day: "Jue", hour: 9, value: 3 }, { day: "Jue", hour: 10, value: 4 },
+    { day: "Vie", hour: 8, value: 4 }, { day: "Vie", hour: 9, value: 6 }, { day: "Vie", hour: 10, value: 8 },
   ];
 
   // Filter urgent vaccinations
@@ -194,7 +234,30 @@ export function DashboardPage() {
             )}
           </section>
 
-          {/* Quick Stats */}
+          {/* Quick Stats - With Charts */}
+          <div style={styles.statsGrid}>
+            {/* Turnos por día - Bar Chart */}
+            <section style={{ ...styles.section, padding: "24px" }}>
+              <h4 style={styles.sectionTitle}>Turnos por Día</h4>
+              <SimpleBarChart data={appointmentsByDayData} height={180} color={theme.primary} />
+            </section>
+
+            {/* Evolución de pacientes - Line Chart */}
+            <section style={{ ...styles.section, padding: "24px" }}>
+              <h4 style={styles.sectionTitle}>Pacientes (7 días)</h4>
+              <LineChart 
+                data={patientsTrendData} 
+                width={350} 
+                height={180} 
+                color={theme.primary}
+                showArea={true}
+                showDots={true}
+                showValue={false}
+              />
+            </section>
+          </div>
+
+          {/* Distribución + Species */}
           <div style={styles.statsGrid}>
             {/* Distribution */}
             <section style={{ ...styles.section, padding: "24px" }}>
